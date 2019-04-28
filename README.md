@@ -18,5 +18,6 @@ services.
 
 ## Acknowledgment
 
-This project is initially based on the flutter_blue example from [pauldemarco](https://github.com/pauldemarco/flutter_blue/tree/master/example)
-You can also find iOS and Android public example projects on [BitBucket](https://bitbucket.org/carre/hexoskin-smart-demo/src/master/).
+This project is initially based on the flutter_blue example from [pauldemarco](https://github.com/pauldemarco/flutter_blue/tree/master/example).
+
+You can also find Hexoskin iOS and Android public example projects on [BitBucket](https://bitbucket.org/carre/hexoskin-smart-demo/src/master/).
