@@ -1,16 +1,22 @@
-# flutter_bluetooth
+WIP (Work in progress)
 
-A new Flutter project.
+# Flutter Bluetooth
 
-## Getting Started
+A basic Flutter project to try the flutter_blue plugin. [Flutter](http://www.flutter.io) is a new 
+mobile SDK to help developers build modern apps for iOS and Android.
 
-This project is a starting point for a Flutter application.
+## Prerequisites
 
-A few resources to get you started if this is your first Flutter project:
+* Flutter 1.2.2
+* FlutterBlue plugin 0.5.0
 
-- [Lab: Write your first Flutter app](https://flutter.io/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.io/docs/cookbook)
+## Getting started
 
-For help getting started with Flutter, view our 
-[online documentation](https://flutter.io/docs), which offers tutorials, 
-samples, guidance on mobile development, and a full API reference.
+This project was made to use the public BLE services of [Hexoskin](https://www.hexoskin.com/) devices. The 
+Hexoskin BLE follows the [GATT](https://www.bluetooth.com/specifications/gatt/generic-attributes-overview/) protocol with battery, heart rate, respiration and accelerometer 
+services.
+
+## Acknowledgment
+
+This project is initially based on the flutter_blue example from [pauldemarco](https://github.com/pauldemarco/flutter_blue/tree/master/example)
+You can also find iOS and Android public example projects on [BitBucket](https://bitbucket.org/carre/hexoskin-smart-demo/src/master/).
