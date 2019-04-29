@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 
-import 'constants.dart';
-import 'theme.dart';
+import 'util/constants.dart';
+import 'util/theme.dart';
 import 'widgets.dart';
 
 void main() => runApp(HxFlutter());
