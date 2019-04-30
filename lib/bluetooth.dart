@@ -3,14 +3,14 @@ import 'dart:async';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:scoped_model/scoped_model.dart';
 
-class Bluetooth extends Model {
+import 'util/constants.dart';
 
+class Bluetooth extends Model {
   static final Bluetooth _singleton = new Bluetooth._internal();
 
   factory Bluetooth() {
     return _singleton;
   }
-
   Bluetooth._internal();
 
   FlutterBlue _flutterBlue = FlutterBlue.instance;
@@ -60,13 +60,11 @@ class Bluetooth extends Model {
   void startScan() {
     scanResults = new Map();
     _scanSubscription = _flutterBlue
-        .scan(
-      timeout: const Duration(seconds: 5),
-    )
+        .scan(timeout: const Duration(seconds: 5),)
         .listen((scanResult) {
-      if(scanResult.advertisementData.localName.startsWith('HX-')) {
-        scanResults[scanResult.device.id] = scanResult;
-        notifyListeners();
+        if(scanResult.advertisementData.localName.startsWith('HX-')) {
+          scanResults[scanResult.device.id] = scanResult;
+          notifyListeners();
       }
     }, onDone: stopScan);
 
@@ -105,6 +103,7 @@ class Bluetooth extends Model {
       if (s == BluetoothDeviceState.connected) {
         device.discoverServices().then((s) {
           services = s;
+          _setNotifications();
           notifyListeners();
         });
       }
@@ -123,34 +122,27 @@ class Bluetooth extends Model {
     notifyListeners();
   }
 
-  _readCharacteristic(BluetoothCharacteristic c) async {
-    await device.readCharacteristic(c);
-    notifyListeners();
+  _setNotifications() {
+    _setNotification(_getCharacteristic(heartRateMeasurementUUID));
+    _setNotification(_getCharacteristic(batteryMeasurementUUID));
+    _setNotification(_getCharacteristic(respirationRateMeasurementUUID));
+    _setNotification(_getCharacteristic(accelerometerMeasurementUUID));
   }
 
-  _writeCharacteristic(BluetoothCharacteristic c) async {
-    await device.writeCharacteristic(c, [0x12, 0x34],
-        type: CharacteristicWriteType.withResponse);
-    notifyListeners();
-  }
-
-  _readDescriptor(BluetoothDescriptor d) async {
-    await device.readDescriptor(d);
-    notifyListeners();
-  }
-
-  _writeDescriptor(BluetoothDescriptor d) async {
-    await device.writeDescriptor(d, [0x12, 0x34]);
-    notifyListeners();
+  _getCharacteristic(String charUUID) {
+    BluetoothCharacteristic characteristic;
+    for (BluetoothService s in services) {
+      for (BluetoothCharacteristic c in s.characteristics) {
+        if (c.uuid.toString() == charUUID) {
+          characteristic = c;
+        }
+      }
+    }
+    return characteristic;
   }
 
   _setNotification(BluetoothCharacteristic c) async {
-    if (c.isNotifying) {
-      await device.setNotifyValue(c, false);
-      // Cancel subscription
-      valueChangedSubscriptions[c.uuid]?.cancel();
-      valueChangedSubscriptions.remove(c.uuid);
-    } else {
+    if (c != null) {
       await device.setNotifyValue(c, true);
       // ignore: cancel_subscriptions
       final sub = device.onValueChanged(c).listen((d) {
@@ -159,15 +151,7 @@ class Bluetooth extends Model {
       });
       // Add to map
       valueChangedSubscriptions[c.uuid] = sub;
+      notifyListeners();
     }
-    notifyListeners();
   }
-
-  _refreshDeviceState(BluetoothDevice d) async {
-    var state = await d.state;
-    deviceState = state;
-    print('State refreshed: $deviceState');
-    notifyListeners();
-  }
-
 }
