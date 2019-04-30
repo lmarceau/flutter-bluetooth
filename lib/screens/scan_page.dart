@@ -22,19 +22,8 @@ class ScanPage extends StatelessWidget {
       );
     } else {
       return new FloatingActionButton(
-          child: new Icon(Icons.search),
-          onPressed: bluetooth.startScan);
-    }
-  }
-
-  _buildActionButtons(Bluetooth bluetooth) {
-    if (bluetooth.isConnected) {
-      return <Widget>[
-        new IconButton(
-          icon: const Icon(Icons.cancel),
-          onPressed: () => bluetooth.disconnect(),
-        )
-      ];
+        child: new Icon(Icons.search),
+        onPressed: bluetooth.startScan);
     }
   }
 
