@@ -4,7 +4,9 @@ import 'package:flutter_bluetooth/bluetooth.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class Carousel extends StatelessWidget {
-  const Carousel({Key key}) : super(key: key);
+  const Carousel({Key key, this.onTap}) : super(key: key);
+
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -70,6 +72,7 @@ class Carousel extends StatelessWidget {
             return InkWell(
               onTap: () {
                 model.connect(result.device);
+                onTap();
               },
             );
           }

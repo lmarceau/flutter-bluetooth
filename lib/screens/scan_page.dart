@@ -3,6 +3,7 @@ import 'package:flutter_blue/flutter_blue.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 import '../bluetooth.dart';
+import '../screens/device_page.dart';
 import '../widgets/carousel.dart';
 
 class ScanPage extends StatelessWidget {
@@ -41,6 +42,13 @@ class ScanPage extends StatelessWidget {
     return new LinearProgressIndicator();
   }
 
+  void onTap(BuildContext context) {
+    Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => DevicePage()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant<Bluetooth>(
@@ -48,12 +56,11 @@ class ScanPage extends StatelessWidget {
         return new Scaffold(
           appBar: new AppBar(
             title: Text("HxFlutter"),
-            actions: _buildActionButtons(model),
           ),
           floatingActionButton: _buildScanningButton(model),
           body: new Stack(
             children: <Widget>[
-              Carousel(),
+              Carousel(onTap: () => onTap(context),),
               (model.isScanning) ? _buildProgressBarTile() : new Container(),
             ],
           ),
