@@ -1,21 +1,18 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:scoped_model/scoped_model.dart';
 
-import 'bluetooth.dart';
-import 'widgets.dart';
+class Bluetooth extends Model {
 
-class ScanPage extends StatefulWidget {
-  ScanPage({Key key, this.title}) : super(key: key);
+  static final Bluetooth _singleton = new Bluetooth._internal();
 
-  final String title;
+  factory Bluetooth() {
+    return _singleton;
+  }
 
-  @override
-  _ScanPageState createState() => _ScanPageState();
-}
+  Bluetooth._internal();
 
-class _ScanPageState extends State<ScanPage> {
   FlutterBlue _flutterBlue = FlutterBlue.instance;
 
   /// Scanning
@@ -36,24 +33,21 @@ class _ScanPageState extends State<ScanPage> {
   Map<Guid, StreamSubscription> valueChangedSubscriptions = {};
   BluetoothDeviceState deviceState = BluetoothDeviceState.disconnected;
 
-  @override
-  void initState() {
-    super.initState();
+  void init() {
     // Immediately get the state of FlutterBlue
     _flutterBlue.state.then((s) {
-      setState(() {
-        state = s;
-      });
+      state = s;
+      print('State init: $state');
+      notifyListeners();
     });
     // Subscribe to state changes
     _stateSubscription = _flutterBlue.onStateChanged().listen((s) {
-      setState(() {
-        state = s;
-      });
+      state = s;
+      print('State updated: $state');
+      notifyListeners();
     });
   }
 
-  @override
   void dispose() {
     _stateSubscription?.cancel();
     _stateSubscription = null;
@@ -61,68 +55,63 @@ class _ScanPageState extends State<ScanPage> {
     _scanSubscription = null;
     deviceConnection?.cancel();
     deviceConnection = null;
-    super.dispose();
   }
 
-  _startScan() {
+  void startScan() {
+    scanResults = new Map();
     _scanSubscription = _flutterBlue
         .scan(
       timeout: const Duration(seconds: 5),
     )
         .listen((scanResult) {
       if(scanResult.advertisementData.localName.startsWith('HX-')) {
-        setState(() {
-          scanResults[scanResult.device.id] = scanResult;
-        });
+        scanResults[scanResult.device.id] = scanResult;
+        notifyListeners();
       }
-    }, onDone: _stopScan);
+    }, onDone: stopScan);
 
-    setState(() {
-      isScanning = true;
-    });
+    isScanning = true;
+    notifyListeners();
   }
 
-  _stopScan() {
+  void stopScan() {
     _scanSubscription?.cancel();
     _scanSubscription = null;
-    setState(() {
-      isScanning = false;
-    });
+    isScanning = false;
+    notifyListeners() ;
   }
 
-  _connect(BluetoothDevice d) async {
+  connect(BluetoothDevice d) async {
     device = d;
+    print('Connect device');
     // Connect to device
     deviceConnection = _flutterBlue
         .connect(device, timeout: const Duration(seconds: 4))
         .listen(
       null,
-      onDone: _disconnect,
+      onDone: disconnect,
     );
 
     // Update the connection state immediately
     device.state.then((s) {
-      setState(() {
         deviceState = s;
-      });
+        notifyListeners();
     });
 
     // Subscribe to connection changes
     deviceStateSubscription = device.onStateChanged().listen((s) {
-      setState(() {
-        deviceState = s;
-      });
+      deviceState = s;
+      notifyListeners();
       if (s == BluetoothDeviceState.connected) {
         device.discoverServices().then((s) {
-          setState(() {
-            services = s;
-          });
+          services = s;
+          notifyListeners();
         });
       }
     });
   }
 
-  _disconnect() {
+  disconnect() {
     // Remove all value changed listeners
     valueChangedSubscriptions.forEach((uuid, sub) => sub.cancel());
     valueChangedSubscriptions.clear();
@@ -130,30 +119,29 @@ class _ScanPageState extends State<ScanPage> {
     deviceStateSubscription = null;
     deviceConnection?.cancel();
     deviceConnection = null;
-    setState(() {
-      device = null;
-    });
+    device = null;
+    notifyListeners();
   }
 
   _readCharacteristic(BluetoothCharacteristic c) async {
     await device.readCharacteristic(c);
-    setState(() {});
+    notifyListeners();
   }
 
   _writeCharacteristic(BluetoothCharacteristic c) async {
     await device.writeCharacteristic(c, [0x12, 0x34],
         type: CharacteristicWriteType.withResponse);
-    setState(() {});
+    notifyListeners();
   }
 
   _readDescriptor(BluetoothDescriptor d) async {
     await device.readDescriptor(d);
-    setState(() {});
+    notifyListeners();
   }
 
   _writeDescriptor(BluetoothDescriptor d) async {
     await device.writeDescriptor(d, [0x12, 0x34]);
-    setState(() {});
+    notifyListeners();
   }
 
   _setNotification(BluetoothCharacteristic c) async {
@@ -166,75 +154,20 @@ class _ScanPageState extends State<ScanPage> {
       await device.setNotifyValue(c, true);
       // ignore: cancel_subscriptions
       final sub = device.onValueChanged(c).listen((d) {
-        setState(() {
-          print('onValueChanged $d');
-        });
+        print('onValueChanged $d');
+        notifyListeners();
       });
       // Add to map
       valueChangedSubscriptions[c.uuid] = sub;
     }
-    setState(() {});
+    notifyListeners();
   }
 
   _refreshDeviceState(BluetoothDevice d) async {
     var state = await d.state;
-    setState(() {
-      deviceState = state;
-      print('State refreshed: $deviceState');
-    });
+    deviceState = state;
+    print('State refreshed: $deviceState');
+    notifyListeners();
   }
 
-  _buildScanningButton() {
-    if (isConnected || state != BluetoothState.on) {
-      return null;
-    }
-    if (isScanning) {
-      return new FloatingActionButton(
-        child: new Icon(Icons.stop),
-        onPressed: _stopScan,
-        backgroundColor: Colors.red,
-      );
-    } else {
-      return new FloatingActionButton(
-          child: new Icon(Icons.search), onPressed: _startScan);
-    }
-  }
-
-  _buildActionButtons() {
-    if (isConnected) {
-      return <Widget>[
-        new IconButton(
-          icon: const Icon(Icons.cancel),
-          onPressed: () => _disconnect(),
-        )
-      ];
-    }
-  }
-
-  _buildProgressBarTile() {
-    return new LinearProgressIndicator();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (isConnected) {
-      // TODO: show the next view with animation transition here
-    }
-    var scanResultsList = scanResults.values.toList();
-    return new MaterialApp(
-      home: new Scaffold(
-        appBar: new AppBar(
-          title: Text(widget.title),
-          actions: _buildActionButtons(),
-        ),
-        floatingActionButton: _buildScanningButton(),
-        body: new Stack(
-          children: <Widget>[
-            Carousel(scanResults:scanResultsList),
-            (isScanning) ? _buildProgressBarTile() : new Container(),
-          ],
-        ),
-      ),
-    );
-  }
 }
