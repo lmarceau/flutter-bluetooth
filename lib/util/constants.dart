@@ -1,6 +1,6 @@
 
 /// Define Bluetooth Low Energy constants
-const heartRateServiceUUID = "180D";
+const String heartRateServiceUUID = "180D";
 const String heartRateMeasurementUUID = "2A37";
 const String respirationRateServiceUUID = "3b55c581-bc19-48f0-bd8c-b522796f8e24";
 const String respirationRateMeasurementUUID = "9bc730c3-8cc0-4d87-85bc-573d6304403c";

@@ -83,7 +83,7 @@ class Bluetooth extends Model {
 
   connect(BluetoothDevice d) async {
     device = d;
-    print('Connect device');
+    print('Connecting device ' + d.name);
     // Connect to device
     deviceConnection = _flutterBlue
         .connect(device, timeout: const Duration(seconds: 4))

@@ -16,7 +16,7 @@ This project was made to use the public BLE services of [Hexoskin](https://www.h
 Hexoskin BLE follows the [GATT](https://www.bluetooth.com/specifications/gatt/generic-attributes-overview/) protocol with battery, heart rate, respiration and accelerometer 
 services.
 
-# Architecture
+## Architecture
 
 Scoped_model package was used to manage the bluetooth state. 
 

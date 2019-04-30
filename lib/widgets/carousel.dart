@@ -1,22 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_bluetooth/bluetooth.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 class Carousel extends StatelessWidget {
-  const Carousel({Key key, this.scanResults, this.onTap}) : super(key: key);
-
-  final List<ScanResult> scanResults;
-  final VoidCallback onTap;
+  const Carousel({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    if (scanResults.isNotEmpty) {
-      return Scaffold(
-          body: _buildCarousel(context, scanResults)
-      );
-    } else {
-      // TODO: show scan for hexoskin devices image and text
-      return new Container();
-    }
+    return ScopedModelDescendant<Bluetooth>(
+      builder: (context, child, model) {
+        var items = model.scanResults.values.toList();
+        if (items.isNotEmpty) {
+          return Scaffold(
+              body: _buildCarousel(context, items)
+          );
+        } else {
+          // TODO: show scan for Hexoskin devices image and text
+          return new Container();
+        }
+      }
+    );
   }
 
   Widget _buildCarousel(BuildContext context, List<ScanResult> scanResults) {
@@ -61,12 +65,15 @@ class Carousel extends StatelessWidget {
             Spacer(flex: 2),
           ],
         ),
-        InkWell(
-          onTap: () {
-              onTap();
-              print("Carousel was tapped with device: " + result.device.name);
-            },
-        ),
+        ScopedModelDescendant<Bluetooth>(
+          builder: (context, child, model) {
+            return InkWell(
+              onTap: () {
+                model.connect(result.device);
+              },
+            );
+          }
+        )
       ],
     );
   }

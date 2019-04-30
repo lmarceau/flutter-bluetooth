@@ -9,9 +9,10 @@ class ScanPage extends StatelessWidget {
   ScanPage({Key key}) : super(key: key);
 
   _buildScanningButton(Bluetooth bluetooth) {
-    if (bluetooth.isConnected || bluetooth.state != BluetoothState.on) {
+    if (!bluetooth.isConnected && bluetooth.state != BluetoothState.on) {
       bluetooth.init();
     }
+
     if (bluetooth.isScanning) {
       return new FloatingActionButton(
         child: new Icon(Icons.stop),
@@ -52,7 +53,7 @@ class ScanPage extends StatelessWidget {
           floatingActionButton: _buildScanningButton(model),
           body: new Stack(
             children: <Widget>[
-              Carousel(scanResults:model.scanResults.values.toList()),
+              Carousel(),
               (model.isScanning) ? _buildProgressBarTile() : new Container(),
             ],
           ),
