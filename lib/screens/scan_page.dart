@@ -3,7 +3,7 @@ import 'package:flutter_blue/flutter_blue.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 import '../bluetooth.dart';
-import '../widgets.dart';
+import '../widgets/carousel.dart';
 
 class ScanPage extends StatelessWidget {
   ScanPage({Key key}) : super(key: key);
