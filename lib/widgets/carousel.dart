@@ -18,7 +18,6 @@ class Carousel extends StatelessWidget {
               body: _buildCarousel(context, items)
           );
         } else {
-          // TODO: show scan for Hexoskin devices image and text
           return new Container();
         }
       }
