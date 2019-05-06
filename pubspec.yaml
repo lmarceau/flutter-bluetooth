@@ -48,6 +48,8 @@ flutter:
   #  - images/a_dot_ham.jpeg
   assets:
     - assets/images/hx_device.png
+    - assets/images/bluetooth_icon.png
+    - assets/images/bluetooth_connection.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/#resolution-aware.
