@@ -2,7 +2,7 @@ WIP (Work in progress)
 
 # Flutter Bluetooth
 
-A basic Flutter project to try the flutter_blue plugin. [Flutter](http://www.flutter.io) is a new 
+A basic Flutter project to try the flutter_blue plugin. [Flutter](http://www.flutter.dev) is a new 
 mobile SDK to help developers build modern apps for iOS and Android.
 
 ## Prerequisites
