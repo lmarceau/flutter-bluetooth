@@ -14,13 +14,7 @@ class Carousel extends StatelessWidget {
     return ScopedModelDescendant<Bluetooth>(
       builder: (context, child, model) {
         var items = model.scanResults.values.toList();
-        if (items.isNotEmpty) {
-          return Scaffold(
-              body: _buildCarousel(context, items)
-          );
-        } else {
-          return new Container();
-        }
+        return _buildCarousel(context, items);
       }
     );
   }
