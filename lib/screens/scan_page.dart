@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 
-import '../bluetooth.dart';
+import '../model/bluetooth.dart';
 import '../screens/device_page.dart';
 import '../widgets/carousel.dart';
 
@@ -14,8 +14,8 @@ class ScanPage extends StatelessWidget {
 
   void onTap(BuildContext context) {
     Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => DevicePage()),
+      context,
+      MaterialPageRoute(builder: (context) => DevicePage()),
     );
   }
 

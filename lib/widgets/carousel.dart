@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
-import 'package:flutter_bluetooth/bluetooth.dart';
 import 'package:scoped_model/scoped_model.dart';
+
+import '../model/bluetooth.dart';
 
 class Carousel extends StatelessWidget {
   const Carousel({Key key, this.onTap}) : super(key: key);

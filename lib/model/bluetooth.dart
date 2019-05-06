@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:scoped_model/scoped_model.dart';
 
-import 'util/constants.dart';
+import '../util/constants.dart';
 
 class Bluetooth extends Model {
   static final Bluetooth _singleton = new Bluetooth._internal();
