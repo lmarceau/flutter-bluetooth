@@ -169,7 +169,7 @@ class Bluetooth extends Model {
     print('onValuesChanged ' + characteristic.value.toString() + " " + uuid);
 
     if (uuid == heartRateMeasurementUUID) {
-        heartRate = data[1];
+      heartRate = data[1];
     } else if (uuid == respirationRateMeasurementUUID) {
       respirationRate = data[1];
 
