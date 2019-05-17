@@ -70,7 +70,7 @@ class ScanPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            new Image.asset("assets/images/bluetooth_connection.png", height: 250),
+            new Image.asset("assets/images/bluetooth_scanning.png", height: 250),
             SizedBox(height: 20),
             new Text("Scanning...", style: TextStyle(fontSize: 13.0,fontWeight: FontWeight.bold)),
           ],
