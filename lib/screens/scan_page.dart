@@ -1,35 +1,80 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:flutter_blue/flutter_blue.dart';
 
-import '../bluetooth.dart';
+import '../model/bluetooth.dart';
 import '../screens/device_page.dart';
 import '../widgets/carousel.dart';
 
 class ScanPage extends StatelessWidget {
   ScanPage({Key key}) : super(key: key);
 
-  _buildProgressBarTile() {
+  @override
+  Widget build(BuildContext context) {
+    return ScopedModelDescendant<Bluetooth>(
+      builder: (context, child, model) {
+        return new Scaffold(
+          appBar: new AppBar(
+            title: Text("HxFlutter"),
+          ),
+          body: new Stack(
+            children: <Widget>[
+              (model.isScanning) ? _buildProgressBarTile() : new Container(),
+              _buildBackgroundWidget(context, model),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildProgressBarTile() {
     return new LinearProgressIndicator();
   }
 
-  void onTap(BuildContext context) {
-    Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => DevicePage()),
-    );
+  Widget _buildBackgroundWidget(BuildContext context, Bluetooth model) {
+    var items = model.scanResults.values.toList();
+    if (items.isNotEmpty && !model.isScanning) {
+      return Stack(
+        children: <Widget>[
+          _buildScanAgainButton(model),
+          Carousel(onTap: () => onTap(context),),
+        ],
+      );
+    } else if (model.isScanning) {
+      return _buildScanningBackground();
+    } else {
+      startBluetooth(model);
+      return _buildWaitingScanningBackground(model);
+    }
+  }
+
+  Widget _buildScanAgainButton(Bluetooth model) {
+    if (!model.isScanning) {
+      return Container(
+          padding: const EdgeInsets.all(15.0),
+          alignment: Alignment.bottomRight,
+          child: new FloatingActionButton(
+            child: new Icon(Icons.search),
+            onPressed: model.startScan,
+          )
+      );
+    } else {
+      return Container();
+    }
   }
 
   Widget _buildScanningBackground() {
     return SizedBox.expand(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          new Image.asset("assets/images/bluetooth_connection.png", height: 250),
-          SizedBox(height: 20),
-          new Text("Scanning...", style: TextStyle(fontSize: 13.0,fontWeight: FontWeight.bold)),
-        ],
-      )
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            new Image.asset("assets/images/bluetooth_scanning.png", height: 250),
+            SizedBox(height: 20),
+            new Text("Scanning...", style: TextStyle(fontSize: 13.0,fontWeight: FontWeight.bold)),
+          ],
+        )
     );
   }
 
@@ -52,40 +97,23 @@ class ScanPage extends StatelessWidget {
       child: Ink.image(
         image: AssetImage("assets/images/bluetooth_icon.png"),
         fit: BoxFit.fill,
-        child: InkWell( onTap: model.startScan, ),
+        child: InkWell( onTap: model.startScan,),
         height: 250,
         width: 250,
       ),
     );
   }
 
-  Widget _buildBackgroundWidget(BuildContext context, Bluetooth model) {
-    var items = model.scanResults.values.toList();
-    if (model.isScanning && items.isNotEmpty) {
-      return Carousel(onTap: () => onTap(context),);
-    } else if (model.isScanning) {
-      return _buildScanningBackground();
-    } else {
-      return _buildWaitingScanningBackground(model);
+  void startBluetooth(Bluetooth model) {
+    if (!model.isConnected && model.state != BluetoothState.on) {
+      model.init();
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return ScopedModelDescendant<Bluetooth>(
-      builder: (context, child, model) {
-        return new Scaffold(
-          appBar: new AppBar(
-            title: Text("HxFlutter"),
-          ),
-          body: new Stack(
-            children: <Widget>[
-              _buildBackgroundWidget(context, model),
-              (model.isScanning) ? _buildProgressBarTile() : new Container(),
-            ],
-          ),
-        );
-      },
+  void onTap(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => DevicePage()),
     );
   }
 }

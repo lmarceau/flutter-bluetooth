@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bluetooth/bluetooth.dart';
 import 'package:scoped_model/scoped_model.dart';
 
-import 'util/theme.dart';
+import 'model/bluetooth.dart';
 import 'screens/scan_page.dart';
+import 'util/theme.dart';
 
 void main() => runApp(HxFlutter());
 

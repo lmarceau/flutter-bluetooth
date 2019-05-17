@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
-import 'package:flutter_bluetooth/bluetooth.dart';
 import 'package:scoped_model/scoped_model.dart';
+
+import '../model/bluetooth.dart';
 
 class Carousel extends StatelessWidget {
   const Carousel({Key key, this.onTap}) : super(key: key);
@@ -13,13 +14,7 @@ class Carousel extends StatelessWidget {
     return ScopedModelDescendant<Bluetooth>(
       builder: (context, child, model) {
         var items = model.scanResults.values.toList();
-        if (items.isNotEmpty) {
-          return Scaffold(
-              body: _buildCarousel(context, items)
-          );
-        } else {
-          return new Container();
-        }
+        return _buildCarousel(context, items);
       }
     );
   }

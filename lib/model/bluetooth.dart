@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:scoped_model/scoped_model.dart';
 
-import 'util/constants.dart';
+import '../util/constants.dart';
 
 class Bluetooth extends Model {
   static final Bluetooth _singleton = new Bluetooth._internal();
@@ -32,6 +32,14 @@ class Bluetooth extends Model {
   List<BluetoothService> services = new List();
   Map<Guid, StreamSubscription> valueChangedSubscriptions = {};
   BluetoothDeviceState deviceState = BluetoothDeviceState.disconnected;
+
+  /// Device metrics
+  int heartRate;
+  int respirationRate;
+  int stepCount;
+  double activity;
+  int cadence;
+  int battery;
 
   void init() {
     // Immediately get the state of FlutterBlue
@@ -141,17 +149,53 @@ class Bluetooth extends Model {
     return characteristic;
   }
 
-  _setNotification(BluetoothCharacteristic c) async {
-    if (c != null) {
-      await device.setNotifyValue(c, true);
+  _setNotification(BluetoothCharacteristic characteristic) async {
+    if (characteristic != null) {
+      await device.setNotifyValue(characteristic, true);
       // ignore: cancel_subscriptions
-      final sub = device.onValueChanged(c).listen((d) {
-        print('onValueChanged $d');
+      final sub = device.onValueChanged(characteristic).listen((d) {
+        _onValuesChanged(characteristic);
         notifyListeners();
       });
       // Add to map
-      valueChangedSubscriptions[c.uuid] = sub;
+      valueChangedSubscriptions[characteristic.uuid] = sub;
       notifyListeners();
+    }
+  }
+
+  _onValuesChanged(BluetoothCharacteristic characteristic) {
+    List<int> data = characteristic.value;
+    String uuid = characteristic.uuid.toString();
+    print('onValuesChanged ' + characteristic.value.toString() + " " + uuid);
+
+    if (uuid == heartRateMeasurementUUID) {
+        heartRate = data[1];
+    } else if (uuid == respirationRateMeasurementUUID) {
+      respirationRate = data[1];
+
+    } else if (uuid == accelerometerMeasurementUUID) {
+      int flag = data[0];
+      int dataIndex = 1;
+
+      bool isStepCountPresent = (flag & 0x01) != 0;
+      bool isActivityPresent = (flag & 0x02) != 0;
+      bool isCadencePresent = (flag & 0x04) != 0;
+      if (isStepCountPresent) {
+        stepCount = data[dataIndex];
+        dataIndex = dataIndex + 2;
+      }
+
+      if (isActivityPresent) {
+        activity = data[dataIndex]/256;
+        dataIndex = dataIndex + 2;
+      }
+
+      if (isCadencePresent) {
+        cadence = data[dataIndex];
+      }
+
+    } else if (uuid == batteryMeasurementUUID) {
+      battery = data[0];
     }
   }
 }
