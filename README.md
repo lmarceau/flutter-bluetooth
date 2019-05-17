@@ -1,5 +1,3 @@
-WIP (Work in progress)
-
 # Flutter Bluetooth
 
 A basic Flutter project to try the flutter_blue plugin. [Flutter](http://www.flutter.io) is a new 
@@ -18,14 +16,15 @@ services.
 
 ## Overview
 
-The app is very basic. It gives the option to scan devices, select one and connect to show its metrics.
-Scan button       |      Scanning
-:-------------------------:|:-------------------------:
-<img src="https://github.com/LaurieMarceau/flutter_bluetooth/screenshots/ScanButton.jpg" width="200">  | <img src="https://github.com/LaurieMarceau/flutter_bluetooth/screenshots/Scanning.jpg" width="200">
+The app is very basic. It gives the option to scan for Hexoskin devices, select one and connect to show some of its metrics.
 
-Scanned devices       |      Device metrics
+Scan button                |      Scanning
 :-------------------------:|:-------------------------:
-<img src="https://github.com/LaurieMarceau/flutter_bluetooth/screenshots/ScannedDevices.jpg" width="200">  | <img src="https://github.com/LaurieMarceau/flutter_bluetooth/screenshots/DeviceMetrics.jpg" width="200">
+<img src="https://github.com/lmarceau/flutter-bluetooth/blob/develop/screenshots/ScanButton.png" width="200">  | <img src="https://github.com/lmarceau/flutter-bluetooth/blob/develop/screenshots/Scanning.png" width="200">
+
+Scanned devices            |      Device metrics
+:-------------------------:|:-------------------------:
+<img src="https://github.com/lmarceau/flutter-bluetooth/blob/develop/screenshots/ScannedDevices.png" width="200">  | <img src="https://github.com/lmarceau/flutter-bluetooth/blob/develop/screenshots/DeviceMetrics.png" width="200">
 
 
 ## Architecture
